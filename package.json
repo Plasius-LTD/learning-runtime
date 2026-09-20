@@ -1,0 +1,93 @@
+{
+  "name": "@plasius/learning-runtime",
+  "version": "0.0.0",
+  "description": "Bounded learning project execution and deterministic simulation for course hosts",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./javascript": {
+      "types": "./dist/javascript.d.ts",
+      "import": "./dist/javascript.js",
+      "require": "./dist/javascript.cjs"
+    },
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json",
+    "./maze": {
+      "types": "./dist/maze.d.ts",
+      "import": "./dist/maze.js",
+      "require": "./dist/maze.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0",
+    "audit:eslint": "eslint . --max-warnings=0",
+    "audit:deps": "npm ls --all --omit=optional --omit=peer > /dev/null 2>&1 || true",
+    "audit:npm": "npm audit --audit-level=high --omit=dev",
+    "clean": "rimraf dist coverage",
+    "pack:check": "node scripts/verify-public-package.cjs",
+    "privacy:check": "npm run pack:check",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build && npm run pack:check"
+  },
+  "keywords": [
+    "learning",
+    "sandbox",
+    "simulation",
+    "typescript",
+    "plasius"
+  ],
+  "author": "Plasius LTD <development@plasius.co.uk>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Plasius-LTD/learning-runtime.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Plasius-LTD/learning-runtime/issues"
+  },
+  "homepage": "https://github.com/Plasius-LTD/learning-runtime#readme",
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.0.1",
+    "@typescript-eslint/eslint-plugin": "^8.59.3",
+    "@typescript-eslint/parser": "^8.59.3",
+    "@vitest/coverage-v8": "^4.1.6",
+    "eslint": "^10.3.0",
+    "globals": "^17.6.0",
+    "rimraf": "^6.1.2",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "overrides": {
+    "brace-expansion": "^5.0.8",
+    "esbuild": "^0.28.1",
+    "minimatch": "^10.2.1",
+    "nanoid": "^3.3.18",
+    "postcss": "^8.5.26"
+  },
+  "dependencies": {
+    "quickjs-emscripten": "0.32.0"
+  }
+}

@@ -24,6 +24,12 @@ No raw source, answers or identifiers enter metrics. Work runs synchronously wit
 explicit local budgets or in a disposable isolated session, with no retry loops or
 network waits. There are no production cloud resources or secrets in this package.
 
-The following runtime work remains after the maze: isolated JavaScript sessions,
-full game state adapters, robot state machines and web-project reducers. This
+JavaScript sessions now support bounded JSON functions, reproducible randomness,
+cooperative engine limits and a server worker with an enforced hard deadline.
+The first CI run demonstrated that a native allocation can outlast an engine
+interrupt; its regression runs the original program in a disposable worker and
+checks both termination and host responsiveness. Timeouts were not increased.
+
+The following runtime work remains: full game state adapters, robot state machines
+and web-project reducers, plus browser worker/host integration. This
 document and package scaffold do not establish completion of any full course.

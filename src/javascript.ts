@@ -26,7 +26,7 @@ export interface JavaScriptProjectSessionOptions {
 const invalid = (): never => { throw new JavaScriptProjectRuntimeError("INVALID_INPUT"); };
 
 /** Reject accessors, cycles and non-JSON values before host serialization. */
-function checkedJson(value: unknown): string {
+export function serializeProjectJson(value: unknown): string {
   const seen = new Set<object>();
   let nodes = 0;
   function visit(value: unknown, depth: number): void {
@@ -137,7 +137,7 @@ export async function createJavaScriptProjectSession(source: string, options: Ja
         if (closed) throw new JavaScriptProjectRuntimeError("CLOSED");
         if (typeof entry !== "string" || !/^[A-Za-z][A-Za-z0-9_]{0,63}$/u.test(entry)
           || !Array.isArray(args) || args.length > JAVASCRIPT_PROJECT_LIMITS.arguments) return invalid();
-        const json = checkedJson(args);
+        const json = serializeProjectJson(args);
         if (++calls > maximumCalls) { dispose(); throw new JavaScriptProjectRuntimeError("CALL_LIMIT"); }
         deadline = Date.now() + executionMs;
         const handles: QuickJSHandle[] = [];
@@ -152,7 +152,7 @@ export async function createJavaScriptProjectSession(source: string, options: Ja
           const output = vm.getString(serialized);
           if (output.length > JAVASCRIPT_PROJECT_LIMITS.jsonCharacters) throw new JavaScriptProjectRuntimeError("OUTPUT_LIMIT");
           const value: unknown = JSON.parse(output);
-          checkedJson(value);
+          serializeProjectJson(value);
           return value as ProjectJsonValue;
         } catch (error) {
           failed = true;

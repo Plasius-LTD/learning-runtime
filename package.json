@@ -11,6 +11,11 @@
     "dist"
   ],
   "exports": {
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js",
+      "require": "./dist/server.cjs"
+    },
     "./javascript": {
       "types": "./dist/javascript.d.ts",
       "import": "./dist/javascript.js",
@@ -29,6 +34,8 @@
     }
   },
   "scripts": {
+    "pretest": "npm run build",
+    "pretest:coverage": "npm run build",
     "build": "tsup",
     "test": "vitest run",
     "test:watch": "vitest",

@@ -26,6 +26,16 @@ game-specific state before rendering or assessing it.
 `Math.random()` uses a host-selected reproducible seed (default 1); ambient Date
 and Intl clocks are absent. Supply simulated time explicitly through project input.
 
+Server consumers use `createServerProjectSession` from
+`@plasius/learning-runtime/server`. Its asynchronous `call` API runs the same core
+inside a private Node worker with an empty environment. Startup is limited to
+1.5 seconds and calls to 500 ms by default; timeout, cancellation or failure
+terminates the worker. There is one in-flight request per session and at most four
+workers per process, with immediate `BUSY` responses instead of an unbounded queue.
+Always `await session.dispose()`; error codes carry no source or worker stack.
+Both ESM and CommonJS entry points are exercised using their actual compiled
+workers. The native-allocation regression also checks that the host stays responsive.
+
 All project/state data stays in the caller's process and must be handled as
 private learner content. Runtime errors contain fixed codes, never learner text.
 

@@ -9,7 +9,8 @@
   - (placeholder)
 
 - **Fixed**
-  - (placeholder)
+  - Support first package creation through the existing verified production CD
+    workflow, with an explicit opt-in credential and an absent-package guard.
 
 - **Security**
   - (placeholder)

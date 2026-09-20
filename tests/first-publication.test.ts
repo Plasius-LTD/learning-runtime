@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 // Release tooling is JavaScript so it runs before dependencies are installed.
 // @ts-expect-error This repository-local release script has no public declarations.
-import { verifyFirstPublication } from '../scripts/verify-first-publication.mjs';
+import { runFirstPublication, verifyFirstPublication } from '../scripts/verify-first-publication.mjs';
 
 describe('first-package publication guard', () => {
   it('permits only the named package when the public registry confirms absence', async () => {
@@ -22,5 +22,14 @@ describe('first-package publication guard', () => {
     expect(registry).not.toHaveBeenCalled();
     await expect(verifyFirstPublication({ packageName: '@plasius/learning-runtime', tokenPresent: true },
       vi.fn().mockRejectedValue(new Error('network failure')))).rejects.toThrow();
+  });
+  it('returns a failing exit code with a bounded message and does not expose dependency errors', async () => {
+    const report = vi.fn();
+    const verify = vi.fn().mockRejectedValue(new Error('private registry detail'));
+    expect(await runFirstPublication({ packageName: '@plasius/learning-runtime', tokenPresent: true }, verify, report)).toBe(1);
+    expect(report).toHaveBeenCalledWith('First-publication verification failed. Check package existence and the production bootstrap credential.\n');
+    report.mockClear();
+    expect(await runFirstPublication({}, vi.fn().mockResolvedValue(undefined), report)).toBe(0);
+    expect(report).not.toHaveBeenCalled();
   });
 });

@@ -13,11 +13,17 @@ export async function verifyFirstPublication({ packageName, tokenPresent }, fetc
   }
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+/** Emit only a fixed operational error, never registry details or credentials. */
+export async function runFirstPublication(input, verify = verifyFirstPublication, report = message => process.stderr.write(message)) {
   try {
-    await verifyFirstPublication({ packageName: process.env.PACKAGE_NAME, tokenPresent: Boolean(process.env.NODE_AUTH_TOKEN) });
+    await verify(input);
+    return 0;
   } catch {
-    process.stderr.write('First-publication verification failed. Check package existence and the production bootstrap credential.\n');
-    process.exitCode = 1;
+    report('First-publication verification failed. Check package existence and the production bootstrap credential.\n');
+    return 1;
   }
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  process.exitCode = await runFirstPublication({ packageName: process.env.PACKAGE_NAME, tokenPresent: Boolean(process.env.NODE_AUTH_TOKEN) });
 }

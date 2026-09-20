@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { fileURLToPath } from 'node:url';
 // Release tooling is JavaScript so it runs before dependencies are installed.
 // @ts-expect-error This repository-local release script has no public declarations.
 import { runFirstPublication, verifyFirstPublication } from '../scripts/verify-first-publication.mjs';
@@ -31,5 +32,25 @@ describe('first-package publication guard', () => {
     report.mockClear();
     expect(await runFirstPublication({}, vi.fn().mockResolvedValue(undefined), report)).toBe(0);
     expect(report).not.toHaveBeenCalled();
+  });
+  it('runs the CLI boundary with a failing exit code when the managed secret is absent', async () => {
+    const argv = process.argv;
+    const exitCode = process.exitCode;
+    const stderr = vi.spyOn(process.stderr, 'write').mockReturnValue(true);
+    vi.stubEnv('NODE_AUTH_TOKEN', '');
+    vi.stubEnv('PACKAGE_NAME', '@plasius/learning-runtime');
+    process.argv = [process.execPath, fileURLToPath(new URL('../scripts/verify-first-publication.mjs', import.meta.url))];
+    try {
+      vi.resetModules();
+      // @ts-expect-error Exercise the dependency-free JavaScript CLI entry point.
+      await import('../scripts/verify-first-publication.mjs');
+      expect(process.exitCode).toBe(1);
+      expect(stderr).toHaveBeenCalledWith('First-publication verification failed. Check package existence and the production bootstrap credential.\n');
+    } finally {
+      process.argv = argv;
+      process.exitCode = exitCode;
+      stderr.mockRestore();
+      vi.unstubAllEnvs();
+    }
   });
 });

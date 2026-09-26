@@ -48,7 +48,7 @@ export function parseWebCss(css: string, checkOpen: () => void): string {
         const name = node.name.name;
         const value = node.value?.type === "String" ? node.value.value : node.value?.name;
         if (node.matcher !== "=" || node.flags || typeof value !== "string"
-          || (!["aria-pressed", "aria-expanded"].includes(name) && name !== "type")
+          || (!["aria-pressed", "aria-expanded", "aria-invalid", "aria-required"].includes(name) && name !== "type")
           || !(name === "type" ? ["text", "number", "range", "checkbox", "button", "submit"].includes(value) : ["true", "false"].includes(value))) return webSourceError();
       }
       if (node.type === "Dimension" || node.type === "Number" || node.type === "Percentage") {

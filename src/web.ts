@@ -80,7 +80,7 @@ export function createWebProject(source: { html: string; css: string }, options:
             if (binding === "disabled" || binding === "checked") {
               if (bool(data)) attributes[binding] = "";
               else delete attributes[binding];
-            } else if (binding === "pressed") attributes["aria-pressed"] = String(bool(data));
+            } else if (binding === "pressed" || binding === "invalid") attributes[`aria-${binding}`] = String(bool(data));
             else if (binding === "label") {
               const label = scalarText(data);
               if (!label.trim() || label.length > WEB_PROJECT_LIMITS.attributeCharacters) return webViewError();

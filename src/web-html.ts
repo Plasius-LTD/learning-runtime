@@ -4,7 +4,7 @@ import { WEB_BINDINGS, WEB_CONTROLS, WEB_INPUT_TYPES, WEB_PROJECT_LIMITS, WEB_TA
 
 const globalText = new Set(["title", "aria-label", "aria-description"]);
 const references = new Set(["for", "aria-labelledby", "aria-describedby", "aria-controls"]);
-const booleanAttributes = new Set(["hidden", "disabled", "checked", "required", "readonly", "selected", "open"]);
+const booleanAttributes = new Set(["hidden", "disabled", "checked", "required", "readonly", "selected", "open", "novalidate"]);
 const numericAttributes = new Set(["min", "max", "step", "value", "maxlength", "rows", "cols", "colspan", "rowspan"]);
 const roles = new Set(["status", "alert", "group", "region", "list", "listitem", "note", "progressbar", "presentation", "none"]);
 
@@ -22,6 +22,7 @@ function attributes(tag: string, values: { name: string; value: string; namespac
         if (!webPath(value)) return webSourceError();
         if (key === "checked" && tag !== "input") return webSourceError();
         if (key === "disabled" && !WEB_CONTROLS.has(tag)) return webSourceError();
+        if (key === "invalid" && !["input", "textarea", "select"].includes(tag)) return webSourceError();
         if (key === "pressed" && tag !== "button") return webSourceError();
         if (key === "value" && !["input", "textarea", "select", "progress", "meter", "output"].includes(tag)) return webSourceError();
         if ((key === "text" || key === "repeat") && WEB_VOID_TAGS.has(tag)) return webSourceError();
@@ -41,6 +42,7 @@ function attributes(tag: string, values: { name: string; value: string; namespac
       if (name === "checked" && tag !== "input") return webSourceError();
       if (name === "selected" && tag !== "option") return webSourceError();
       if (name === "open" && tag !== "details") return webSourceError();
+      if (name === "novalidate" && tag !== "form") return webSourceError();
     } else if (name === "type") {
       if (tag === "input" ? !WEB_INPUT_TYPES.has(value) : tag !== "button" || !["button", "submit"].includes(value)) return webSourceError();
     } else if (name === "value" && ["input", "option"].includes(tag)) {
@@ -53,7 +55,7 @@ function attributes(tag: string, values: { name: string; value: string; namespac
       if (!roles.has(value)) return webSourceError();
     } else if (name === "aria-live") {
       if (!["polite", "assertive", "off"].includes(value)) return webSourceError();
-    } else if (["aria-atomic", "aria-pressed", "aria-expanded", "aria-hidden"].includes(name)) {
+    } else if (["aria-atomic", "aria-pressed", "aria-expanded", "aria-hidden", "aria-required", "aria-invalid"].includes(name)) {
       if (!["true", "false"].includes(value)) return webSourceError();
     } else if (name === "tabindex") {
       if (value !== "0" && value !== "-1") return webSourceError();

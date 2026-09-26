@@ -15,8 +15,8 @@ export const WEB_TAGS = new Set(["main", "section", "article", "aside", "header"
 export const WEB_VOID_TAGS = new Set(["input", "br", "hr"]);
 export const WEB_CONTROLS = new Set(["input", "textarea", "select", "button"]);
 export const WEB_INPUT_TYPES = new Set(["text", "number", "range", "checkbox"]);
-export const WEB_BINDINGS = new Set(["text", "value", "checked", "disabled", "pressed", "label", "if"]);
-export type WebBinding = "text" | "value" | "checked" | "disabled" | "pressed" | "label" | "if";
+export const WEB_BINDINGS = new Set(["text", "value", "checked", "disabled", "pressed", "invalid", "label", "if"]);
+export type WebBinding = "text" | "value" | "checked" | "disabled" | "pressed" | "invalid" | "label" | "if";
 
 export interface WebTextNode { kind: "text"; text: string }
 export interface WebField { name: string; type: "text" | "number" | "range" | "checkbox" | "textarea" | "select" }

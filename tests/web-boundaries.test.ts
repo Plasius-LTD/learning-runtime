@@ -30,6 +30,7 @@ describe("web project grammar and resource boundaries", () => {
       button:focus-visible { outline: 2px solid blue; }
       button[aria-pressed="true"] { font-weight: bold; }
       input[type=checkbox] { margin: 1px; }
+      input[aria-invalid=true] { border: 1px solid red; }
       li:nth-child(2) { font-weight: bold; }
       @media (prefers-reduced-motion: reduce) { p { transition-duration: 0s; } }
       @media (prefers-color-scheme: dark) { main { color: white; background-color: black; } }

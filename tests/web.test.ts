@@ -39,6 +39,13 @@ describe("bounded semantic web projects", () => {
     expect(value.nodes).toHaveLength(2);
     expect(project.render({ paused: false, energy: 0, hasError: true, error: "Stopped" }).nodes).toHaveLength(3);
   });
+  it("projects accessible custom form validation without relying on native popups", () => {
+    const project = createWebProject({ html: '<form novalidate data-action="add"><label for="title">Title</label><input id="title" name="title" aria-required="true" aria-describedby="title-error" data-invalid="titleInvalid"><p id="title-error" role="alert" data-text="titleError"></p><button type="submit">Add</button></form>', css: "" });
+    expect(JSON.stringify(project.render({ titleInvalid: true, titleError: "Enter a mission title." }))).toContain('"aria-invalid":"true"');
+    expect(JSON.stringify(project.render({ titleInvalid: false, titleError: "" }))).toContain('"aria-invalid":"false"');
+    expect(() => createWebProject({ html: '<p novalidate>x</p>', css: "" })).toThrow(WebProjectError);
+    expect(() => createWebProject({ html: '<p data-invalid="flag">x</p>', css: "" })).toThrow(WebProjectError);
+  });
   it("has no evaluation, network, storage or DOM capabilities", () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
     const project = createWebProject({ html: '<p data-text="text"></p>', css: "p { margin: 0; }" });

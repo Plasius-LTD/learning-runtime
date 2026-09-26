@@ -96,6 +96,7 @@ segments; expressions, array indexing and prototype paths are unsupported:
 | `data-text` | Replace children with a scalar text value. |
 | `data-value` | Project a control, output, progress or meter value. |
 | `data-checked`, `data-disabled`, `data-pressed` | Project boolean checked/disabled/ARIA-pressed state. |
+| `data-invalid` | Project boolean ARIA-invalid state on a form field. |
 | `data-label` | Project a nonempty accessible label. |
 | `data-if` | Include the element only when the bound boolean is true. |
 | `data-repeat` | Repeat this element for up to 50 records with unique string `id` values; descendant bindings read that record. |
@@ -108,13 +109,16 @@ translate changes to `{ type: "field", name, value }`, with bounded strings or
 checkbox booleans; action controls produce `{ type, id? }`. No event object,
 DOM reference, callback or implicit JavaScript expression reaches learner code.
 Forms use their own submit action; their submit buttons have no separate action.
+Forms may use `novalidate` for custom reducer validation, with `aria-required`,
+`data-invalid`, described errors and persistent alert/status regions providing
+equivalent accessible feedback instead of relying on native validation popups.
 
 Styles use a bounded allowlist of layout, typography, colour, box and focus
 properties. Custom properties are parsed and checked too. Supported media rules
 are min/max width, reduced motion and colour scheme. URLs, imports, font loading,
 unparsed values, `!important`, fixed positioning, pseudo-elements and unsupported
 functions/selectors are rejected. Attribute selectors are limited to exact native
-input-type and boolean ARIA-pressed/expanded comparisons. Transition durations are
+input-type and boolean ARIA-pressed/expanded/invalid/required comparisons. Transition durations are
 at most two seconds; explicit grid repetitions are at most twelve.
 
 Budgets: HTML 24,000 characters; CSS 16,000; 256 template nodes at depth 20;

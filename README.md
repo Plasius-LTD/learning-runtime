@@ -39,6 +39,39 @@ workers. The native-allocation regression also checks that the host stays respon
 All project/state data stays in the caller's process and must be handled as
 private learner content. Runtime errors contain fixed codes, never learner text.
 
+`@plasius/learning-runtime/cpp` supplies `createCppProjectSession(source, options)`
+for the documented C++ robot simulator subset. Declare output signatures such as
+`{ outputs: { setServoAngle: ["number"] } }`; each `run({ timeMs, sensors })`
+returns structured `commands` and a detached primitive `globals` snapshot.
+The host validates command names, ranges and simulation safety before applying
+them. No host callback is accepted and no hardware action is performed.
+
+Programs require `void loop()` and may include a one-time `void setup()`, globals,
+typed helper functions, block-local variables, assignments, if/else, for/while,
+return, break and continue. Supported primitive types are int, double, bool and
+string; constants require initial values. Integer division truncates toward zero;
+mixed numeric arithmetic uses double. Conditions require bool and sensor readers
+require the matching primitive type. There are no implicit number/bool conversions,
+arrays, pointers, classes, includes, imports or arbitrary member access. This is a
+teaching simulator, not a full C++ compiler or an Arduino firmware toolchain.
+
+The built-ins are `millis()`, `numberSensor(name)`, `boolSensor(name)`,
+`textSensor(name)`, `min(a,b)`, `max(a,b)` and `abs(value)`. Time is supplied by
+the host, never read from a wall clock. Use elapsed-time conditions instead of
+blocking sleeps. Sensor observations are freshly snapshotted on each tick.
+Globals persist only inside that session; create a new session to restart.
+
+Limits: 32,768 source characters, 4,096 tokens, parse depth 64, 64 top-level names,
+32 functions, eight arguments, 64 variables per scope, 2,000 execution operations
+and call depth 16 per tick. A tick accepts at most 32 primitive sensors and emits
+at most 64 commands from at most 16 declared signatures. Strings are at most 256
+characters; numbers are finite and at most one billion in magnitude. Simulated
+milliseconds are nonnegative integers and cannot run backwards. Accessor inputs
+are rejected without invoking them. Failure or cancellation closes the session,
+discards that tick's commands and releases state; error messages contain no source.
+Use `dispose()` after successful use as well. Browser hosts still run learners'
+programs in their cancellable worker, keeping the interface responsive.
+
 The browser worker and the server assessor use the same runtime. Learner source
 never receives browser, network, storage, account or physical hardware access.
 The host owns authentication, saves, protected test scenarios and final scoring.
@@ -71,4 +104,5 @@ delete the environment secret. All later releases use the default OIDC path.
 See [the first-publication decision](docs/adrs/adr-0002-first-publication.md).
 
 See [the runtime boundary decision](docs/adrs/adr-0001-bounded-course-runtime.md)
-and [delivery design](docs/design/complete-course-runtime.md).
+and [delivery design](docs/design/complete-course-runtime.md). The robot language
+boundary is recorded in [ADR 0003](docs/adrs/adr-0003-bounded-robot-programs.md).

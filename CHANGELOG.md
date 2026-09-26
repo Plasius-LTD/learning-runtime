@@ -3,7 +3,10 @@
 ## [Unreleased]
 
 - **Added**
-  - (placeholder)
+  - Add the bounded C++ robot simulator subset with persistent typed state,
+    functions, branches, loops, simulated timing, fresh primitive sensors and
+    structured command output. Source, execution, depth, input and output budgets
+    fail closed without host or physical-device access.
 
 - **Changed**
   - (placeholder)

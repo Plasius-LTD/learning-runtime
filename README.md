@@ -72,6 +72,67 @@ discards that tick's commands and releases state; error messages contain no sour
 Use `dispose()` after successful use as well. Browser hosts still run learners'
 programs in their cancellable worker, keeping the interface responsive.
 
+### Web project templates
+
+`@plasius/learning-runtime/web` supplies `createWebProject({ html, css }, { signal })`.
+It parses a documented HTML/CSS subset without creating DOM nodes, executing
+JavaScript or loading resources. Call `project.render(view)` with bounded JSON
+returned from the separately isolated learner `view` function. The result contains
+inert `nodes` and approved `css`; `project.template` returns a detached structural
+snapshot. Dispose on navigation/cancellation. Invalid view data may be corrected
+and rendered again; cancellation closes the project permanently.
+
+Use semantic sections, headings, text, lists, tables, forms and native controls.
+Scripts, metadata, URLs, embeds, SVG/MathML, custom elements, event attributes and
+inline styles are rejected, including unsupported tokens an HTML parser would
+otherwise discard. The parser uses HTML's own tokenization and tree construction;
+it does not implement an approximate HTML regex parser.
+
+Bindings read own JSON fields through paths such as `draft.title`, at most four
+segments; expressions, array indexing and prototype paths are unsupported:
+
+| Attribute | Meaning |
+| --- | --- |
+| `data-text` | Replace children with a scalar text value. |
+| `data-value` | Project a control, output, progress or meter value. |
+| `data-checked`, `data-disabled`, `data-pressed` | Project boolean checked/disabled/ARIA-pressed state. |
+| `data-label` | Project a nonempty accessible label. |
+| `data-if` | Include the element only when the bound boolean is true. |
+| `data-repeat` | Repeat this element for up to 50 records with unique string `id` values; descendant bindings read that record. |
+| `data-action` | Emit action metadata for a form or a `type="button"` button. |
+| `data-id` | Bind an optional action item ID. |
+
+Static element IDs are forbidden within repeat subtrees. Named text, number,
+range, checkbox, textarea and select controls expose `field` metadata. Hosts
+translate changes to `{ type: "field", name, value }`, with bounded strings or
+checkbox booleans; action controls produce `{ type, id? }`. No event object,
+DOM reference, callback or implicit JavaScript expression reaches learner code.
+Forms use their own submit action; their submit buttons have no separate action.
+
+Styles use a bounded allowlist of layout, typography, colour, box and focus
+properties. Custom properties are parsed and checked too. Supported media rules
+are min/max width, reduced motion and colour scheme. URLs, imports, font loading,
+unparsed values, `!important`, fixed positioning, pseudo-elements and unsupported
+functions/selectors are rejected. Attribute selectors are limited to exact native
+input-type and boolean ARIA-pressed/expanded comparisons. Transition durations are
+at most two seconds; explicit grid repetitions are at most twelve.
+
+Budgets: HTML 24,000 characters; CSS 16,000; 256 template nodes at depth 20;
+16 attributes per element, each at most 240 characters; CSS 2,048 syntax nodes
+at depth 16; 768 projected nodes; serialized projection at most 64,000 characters.
+Bound control values are at most 2,000 characters and accessible labels 240.
+JSON views reuse the existing transport's node/depth/value limits and reject
+accessors without invoking them. Errors contain fixed codes, never source text.
+
+The host must run compilation/projection in its disposable worker and render only
+this closed representation using element, text and known attribute/property APIs.
+Never concatenate it into executable HTML. Isolate the preview with a restrictive
+sandbox and CSP prohibiting scripts, resource loads, navigation and outgoing forms;
+install approved CSS with `textContent`. Preserve focus and native field input,
+validate translated actions, expose useful failure feedback and keep editor/account
+controls outside the preview. Parser success is neither an accessibility pass nor
+course assessment evidence. See [ADR 0004](docs/adrs/adr-0004-bounded-web-projects.md).
+
 The browser worker and the server assessor use the same runtime. Learner source
 never receives browser, network, storage, account or physical hardware access.
 The host owns authentication, saves, protected test scenarios and final scoring.

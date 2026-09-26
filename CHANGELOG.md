@@ -3,6 +3,11 @@
 ## [Unreleased]
 
 - **Added**
+  - Add a lazy web-project compiler for bounded semantic HTML, CSS and explicit
+    JSON view/action bindings. Return inert nodes with separate field/action
+    metadata, reject executable markup and resource-loading styles, and bound
+    parsing, repetition and output. Host preview isolation and course assessment
+    remain separate required integration gates.
   - Add the bounded C++ robot simulator subset with persistent typed state,
     functions, branches, loops, simulated timing, fresh primitive sensors and
     structured command output. Source, execution, depth, input and output budgets

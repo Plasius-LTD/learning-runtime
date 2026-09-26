@@ -33,3 +33,11 @@ checks both termination and host responsiveness. Timeouts were not increased.
 The following runtime work remains: full game state adapters, robot state machines
 and web-project reducers, plus browser worker/host integration. This
 document and package scaffold do not establish completion of any full course.
+
+Web courses require real editable markup, styles and reducer source. Follow
+[ADR 0004](../adrs/adr-0004-bounded-web-projects.md): a lazy bounded HTML/CSS parser
+returns a closed representation with explicit state/action bindings. Reuse the
+existing JavaScript worker for state/update/view, keep rendering in the host,
+and prohibit arbitrary DOM, navigation and network access. Complete-course
+contracts must reference the tested binding grammar rather than inventing a
+different templating mechanism for each web module.

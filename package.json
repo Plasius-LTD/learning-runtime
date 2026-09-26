@@ -11,6 +11,11 @@
     "dist"
   ],
   "exports": {
+    "./web": {
+      "types": "./dist/web.d.ts",
+      "import": "./dist/web.js",
+      "require": "./dist/web.cjs"
+    },
     "./cpp": {
       "types": "./dist/cpp.d.ts",
       "import": "./dist/cpp.js",
@@ -75,6 +80,7 @@
   "homepage": "https://github.com/Plasius-LTD/learning-runtime#readme",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/css-tree": "3.2.0",
     "@types/node": "^26.0.1",
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",
@@ -100,6 +106,8 @@
     "postcss": "^8.5.26"
   },
   "dependencies": {
+    "css-tree": "3.2.1",
+    "parse5": "8.0.1",
     "quickjs-emscripten": "0.32.0"
   }
 }

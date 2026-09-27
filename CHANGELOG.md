@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Refresh compatible npm dependencies and published Plasius dependency resolutions for the weekly security maintenance batch (2026-09-27).
+
 - **Added**
   - Add a lazy web-project compiler for bounded semantic HTML, CSS and explicit
     JSON view/action bindings. Return inert nodes with separate field/action

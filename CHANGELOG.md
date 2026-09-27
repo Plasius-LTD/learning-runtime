@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Refresh npm dependency lockfile to current supported stable versions (weekly maintenance, 2026-09-27).
+
 - **Added**
   - Add a lazy web-project compiler for bounded semantic HTML, CSS and explicit
     JSON view/action bindings. Return inert nodes with separate field/action

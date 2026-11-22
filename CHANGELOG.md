@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Allocate a new release version when an incomplete release tag belongs to older source; preserve immutable tags and exact-main publication checks.
+
 - Refresh supported npm dependency and security tooling baselines; preserve runtime API contracts (weekly maintenance, 2026-11-22).
 
 - Refresh npm dependency lockfile to current supported stable versions (weekly maintenance, 2026-09-27).

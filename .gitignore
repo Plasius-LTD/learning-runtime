@@ -20,3 +20,4 @@ coverage/
 **/certs/**/*-key.pem
 **/certs/**/*.key
 **/certs/**/*.p8
+.first-publication-lcov.info

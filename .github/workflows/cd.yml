@@ -34,7 +34,7 @@ on:
         required: false
         type: string
       first_publication:
-        description: "One-time package creation using the production NPM_BOOTSTRAP_TOKEN; refused once the package exists."
+        description: "Register a reviewed, enrolled package only while absent from npm; normal releases use OIDC."
         required: false
         type: boolean
         default: false
@@ -927,20 +927,33 @@ jobs:
           PUBLISH_ARGS=(--access public --provenance --registry https://registry.npmjs.org --tag "${DIST_TAG}")
           npm publish "./${TARBALL}" --ignore-scripts "${PUBLISH_ARGS[@]}"
 
-      - name: Initialise the new npm package through the approved release path
+      - name: Register new package with standard npm credential
         if: steps.release.outputs.should_publish_npm == 'true' && inputs.first_publication
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_BOOTSTRAP_TOKEN }}
+          FIRST_PUBLICATION: ${{ inputs.first_publication }}
           PACKAGE_NAME: ${{ steps.release.outputs.package_name }}
+          PACKAGE_VERSION: ${{ steps.release.outputs.release_version }}
+          EXPECTED_SHA: ${{ inputs.expected_commit_sha }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           DIST_TAG: ${{ steps.release.outputs.dist_tag }}
           TARBALL: ${{ steps.release.outputs.tarball_path }}
         run: |
           set -euo pipefail
-          node scripts/verify-first-publication.mjs
-          TASK_NPM_CONFIG="$(mktemp)"
-          trap 'rm -f "${TASK_NPM_CONFIG}"' EXIT
-          printf '%s\n' '//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}' > "${TASK_NPM_CONFIG}"
-          NPM_CONFIG_USERCONFIG="${TASK_NPM_CONFIG}" npm publish "./${TARBALL}" --ignore-scripts --access public --provenance --registry https://registry.npmjs.org --tag "${DIST_TAG}"
+
+          ACTUAL_SHA="$(git rev-parse HEAD)" node scripts/verify-first-publication.mjs
+          git fetch origin main --no-tags
+          REMOTE_MAIN="$(git rev-parse refs/remotes/origin/main)"
+          if [ "${REMOTE_MAIN}" != "${EXPECTED_SHA}" ]; then
+            echo "main moved; refusing first publication." >&2
+            exit 1
+          fi
+
+          umask 077
+          INITIAL_NPM_CONFIG="$(mktemp "${RUNNER_TEMP}/npm-first-publication.XXXXXX")"
+          trap 'rm -f -- "${INITIAL_NPM_CONFIG}"' EXIT
+          printf '%s\n' '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > "${INITIAL_NPM_CONFIG}"
+          PUBLISH_ARGS=(--access public --provenance --registry https://registry.npmjs.org --tag "${DIST_TAG}")
+          NPM_CONFIG_USERCONFIG="${INITIAL_NPM_CONFIG}" npm publish "./${TARBALL}" --ignore-scripts "${PUBLISH_ARGS[@]}"
 
       - name: Skip duplicate npm publication
         if: steps.release.outputs.should_publish_npm != 'true'

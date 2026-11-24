@@ -4,3 +4,4 @@
 - [ADR 0002: First publication](adr-0002-first-publication.md)
 - [ADR 0003: Bounded robot programs](adr-0003-bounded-robot-programs.md)
 - [ADR 0004: Bounded web projects](adr-0004-bounded-web-projects.md)
+- [ADR 0005: Shared Schema registration](adr-0005-shared-schema-registration.md)

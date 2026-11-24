@@ -154,20 +154,17 @@ through `.github/workflows/cd.yml` on `main` and the GitHub `production` environ
 Consumer adoption requires verified CI, the exact package release and registry
 integrity. Never publish directly from a workstation.
 
-For the first publication only, npm requires the package to exist before a trusted
-publisher can be configured. An operator can place a short-lived, minimally scoped
-publishing token in the GitHub `production` environment as `NPM_BOOTSTRAP_TOKEN`,
-then select `first_publication` on this same CD workflow. This opt-in path retains
-the exact-main CI, immutable bundle, provenance and registry-integrity checks. It
-refuses existing packages, missing credentials, registry errors and redirects.
-The credential is available only to the publication step; no local publication is
-permitted. Once created, configure npm's trusted publisher for organisation
-`Plasius-LTD`, repository `learning-runtime`, workflow `cd.yml`, environment
-`production`, with direct publication allowed. Revoke the bootstrap token and
-delete the environment secret. All later releases use the default OIDC path.
-
-See [the first-publication decision](docs/adrs/adr-0002-first-publication.md).
-
 See [the runtime boundary decision](docs/adrs/adr-0001-bounded-course-runtime.md)
 and [delivery design](docs/design/complete-course-runtime.md). The robot language
 boundary is recorded in [ADR 0003](docs/adrs/adr-0003-bounded-robot-programs.md).
+
+## Package registration and trusted publishing
+
+The release workflow follows the shared `@plasius/schema` template. The reviewed
+enrollment allows only `@plasius/learning-runtime@0.1.2` through main `cd.yml` and the
+`production` environment, using the standard temporary `NPM_TOKEN`. The default
+release path remains OIDC. No package-specific secret is introduced. See the
+[registration design](docs/design/shared-first-registration.md) and
+[ADR 0005](docs/adrs/adr-0005-shared-schema-registration.md) for exact admission, credential cleanup
+and the verified OIDC handover. Publication remains incomplete until CD and npm
+registry integrity are verified.

@@ -1,5 +1,8 @@
 # ADR 0002: First publication through the existing CD workflow
 
+> Registration mechanics are superseded by the [shared Schema design](../design/shared-first-registration.md)
+> under Task #14. Historical secret names below are not operator instructions.
+
 Status: Accepted for implementation; operational credential setup remains required.
 
 Parent: runtime Task #1, site Story #2236, Feature #1704.

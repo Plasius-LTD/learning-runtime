@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+- Adopt the shared Schema first-registration template with the standard temporary
+  `NPM_TOKEN`, exact enrollment and subsequent tokenless OIDC handover (#14).
+
 - **Added**
   - (placeholder)
 

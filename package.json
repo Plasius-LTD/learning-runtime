@@ -1,6 +1,6 @@
 {
   "name": "@plasius/learning-runtime",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Bounded learning project execution and deterministic simulation for course hosts",
   "type": "module",
   "sideEffects": false,

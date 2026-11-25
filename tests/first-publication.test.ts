@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import { fileURLToPath } from 'node:url';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 // Release tooling is JavaScript so it runs before dependencies are installed.
 // @ts-expect-error This repository-local release script has no public declarations.
-import { runFirstPublication, verifyFirstPublication } from '../scripts/verify-first-publication.mjs';
+import { readFirstPublicationDescriptor, runFirstPublication, verifyFirstPublication } from '../scripts/verify-first-publication.mjs';
 
 const sha = 'a'.repeat(40);
 const manifest = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -17,6 +17,17 @@ const environment = { GITHUB_REPOSITORY: valid.repository, PACKAGE_NAME: valid.p
   GITHUB_WORKFLOW_REF: valid.workflowRef, GITHUB_EVENT_NAME: valid.eventName, EXPECTED_SHA: sha, ACTUAL_SHA: sha, GITHUB_SHA: sha };
 
 describe('first-package publication guard', () => {
+  it('refuses retired enrollment before verification despite an explicit valid opt-in', async () => {
+    const file = fileURLToPath(new URL('../.github/npm-first-publication.json', import.meta.url));
+    expect(existsSync(file)).toBe(false);
+    const verify = vi.fn();
+    const report = vi.fn();
+    expect(await runFirstPublication(environment, {
+      readDescriptor: () => readFirstPublicationDescriptor(file), verify, report,
+    })).toBe(1);
+    expect(verify).not.toHaveBeenCalled();
+    expect(report).toHaveBeenCalledWith('First-publication verification failed; check enrollment, exact main and registry absence.\n');
+  });
   it('permits only the named package when the public registry confirms absence', async () => {
     const registry = vi.fn().mockResolvedValue({ status: 404 });
     await verifyFirstPublication(valid, registry);

@@ -12,6 +12,20 @@
   - (placeholder)
 
 - **Security**
+  - (placeholder)
+
+## [0.1.3] - 2026-11-25
+
+- **Added**
+  - (placeholder)
+
+- **Changed**
+  - (placeholder)
+
+- **Fixed**
+  - (placeholder)
+
+- **Security**
   - Retire first-registration enrollment after the verified 0.1.2 release and
     require the existing OIDC path for subsequent releases (#14).
 
@@ -76,3 +90,4 @@
 [0.1.0]: https://github.com/Plasius-LTD/learning-runtime/releases/tag/v0.1.0
 [0.1.1]: https://github.com/Plasius-LTD/learning-runtime/releases/tag/v0.1.1
 [0.1.2]: https://github.com/Plasius-LTD/learning-runtime/releases/tag/v0.1.2
+[0.1.3]: https://github.com/Plasius-LTD/learning-runtime/releases/tag/v0.1.3

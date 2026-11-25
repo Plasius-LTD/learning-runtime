@@ -12,7 +12,8 @@
   - (placeholder)
 
 - **Security**
-  - (placeholder)
+  - Retire first-registration enrollment after the verified 0.1.2 release and
+    require the existing OIDC path for subsequent releases (#14).
 
 ## [0.1.2] - 2026-11-25
 
